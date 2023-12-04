@@ -13,7 +13,7 @@ let words =
       "eight", 8
       "nine", 9 ]
 
-let getValue (line: string) : int =
+let part1 (line: string) : int =
     line
     |> Seq.filter (fun x -> letters |> List.contains x |> not)
     |> fun x -> sprintf "%c%c" (Seq.head x) (Seq.last x)
@@ -36,6 +36,6 @@ let part2 (line: string) : string =
             replace b)
         ""
 
-input |> Seq.map (part2 >> getValue) |> Seq.sum
+input |> Seq.map (part2 >> part1) |> Seq.sum
 
 // Correct 54845
