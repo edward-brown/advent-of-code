@@ -1,4 +1,3 @@
-open System
 let input = System.IO.File.ReadAllLines("2024/2/input.txt")
 
 let distanceSafe (a: int) (b: int) = abs (a - b) > 0 && abs (a - b) < 4
