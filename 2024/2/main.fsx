@@ -1,20 +1,21 @@
+open System
 let input = System.IO.File.ReadAllLines("2024/2/input.txt")
 
-let increasingFailCount (x: (int * int) seq) =
-    x |> Seq.map (fun (a, b) -> a > b) |> Seq.filter (fun a -> not a) |> Seq.length
+let distanceSafe (a: int) (b: int) = abs (a - b) > 0 && abs (a - b) < 4
 
-let decreasingFailCount (x: (int * int) seq) =
-    x |> Seq.map (fun (a, b) -> a < b) |> Seq.filter (fun a -> not a) |> Seq.length
+let allIncreasing (x: (int * int) seq) : bool =
+    x |> Seq.map (fun (a, b) -> a > b && (distanceSafe a b)) |> Seq.filter (fun a -> not a) |> Seq.length = 0
 
-let safeDistancesFailCount (x: (int * int) seq) =
-    x
-    |> Seq.map (fun (a, b) -> (a - b) |> abs)
-    |> Seq.map (fun a -> a > 0 && a < 4)
-    |> Seq.filter (fun a -> not a)
-    |> Seq.length
+let allDecreasing (x: (int * int) seq) : bool =
+    x |> Seq.map (fun (a, b) -> a < b && (distanceSafe a b)) |> Seq.filter (fun a -> not a) |> Seq.length = 0
 
-let failCount (x: (int * int) seq) =
-    (increasingFailCount x) + (decreasingFailCount x) + (safeDistancesFailCount x)
+let isSafe (x: (int * int) seq) : bool = (allIncreasing x) || (allDecreasing x)
+
+let isSafeWithNRemoved (x: int seq) =
+    x 
+    |> Seq.mapi (fun (i: int) _ -> x |> Seq.removeAt i |> Seq.pairwise |> isSafe)
+    |> Seq.filter (fun x -> x)
+    |> Seq.length > 0
 
 let parse () =
     input |> Seq.map (fun x -> x.Split(' ') |> Seq.map int)
@@ -22,13 +23,13 @@ let parse () =
 // 356
 let part1 =
     parse ()
-    |> Seq.map (fun x -> x |> Seq.pairwise |> failCount = 0)
+    |> Seq.map (fun x -> x |> Seq.pairwise |> isSafe)
     |> Seq.filter (fun x -> x)
     |> Seq.length
 
-//
+// 413
 let part2 =
     parse ()
-    |> Seq.map (fun x -> x |> Seq.pairwise |> failCount < 2)
+    |> Seq.map (isSafeWithNRemoved)
     |> Seq.filter (fun x -> x)
     |> Seq.length
